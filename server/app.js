@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const logger = require("morgan");
 
+app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(logger("dev"));
