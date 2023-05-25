@@ -17,7 +17,9 @@ function App() {
     const data = new FormData();
     data.append('file', image);
 
-    instance.post('/api/test/upload', data)
+    instance.get('/test').then((res) => console.log(res.data));
+
+    instance.post('/test/upload', data)
     .then((res) => {
       setImage(`${baseURL}/${res.data.filename}`);
     });
