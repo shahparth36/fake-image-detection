@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import axios from 'axios';
+
+import axios from './axios';
 
 function App() {
   const [image, setImage] = useState(null);
@@ -16,7 +17,7 @@ function App() {
     const data = new FormData();
     data.append('file', image);
 
-    axios.post('http://localhost:5000/api/test/upload', data)
+    axios.post('/api/test/upload', data)
     .then((res) => {
       setImage(`http://localhost:5000/${res.data.filename}`);
     });
