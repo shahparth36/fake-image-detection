@@ -1,10 +1,10 @@
 import axios from "axios";
 
-let baseURL = "http://localhost:5000/api";
+let baseURL = "http://ec2-13-235-2-222.ap-south-1.compute.amazonaws.com/api";
 
 const instance = axios.create({
   baseURL,
   timeout: 3000,
 });
 
-export default instance;
+export default { instance, baseURL };

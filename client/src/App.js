@@ -2,7 +2,7 @@ import { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import axios from './axios';
+import { instance, baseURL } from './axios';
 
 function App() {
   const [image, setImage] = useState(null);
@@ -17,9 +17,9 @@ function App() {
     const data = new FormData();
     data.append('file', image);
 
-    axios.post('/api/test/upload', data)
+    instance.post('/api/test/upload', data)
     .then((res) => {
-      setImage(`http://localhost:5000/${res.data.filename}`);
+      setImage(`${baseURL}/${res.data.filename}`);
     });
   };
 
