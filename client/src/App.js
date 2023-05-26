@@ -2,26 +2,31 @@ import { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import { instance, baseURL } from './axios';
+import { instance } from './axios';
 
 function App() {
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(false);
+  const [prediction, setPrediction] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const onImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
       setImage(event.target.files[0]);
+      setImagePreview(URL.createObjectURL(event.target.files[0]));
     }
   }
 
   const handleClick = async () => {
+    setIsLoading(true);
     const data = new FormData();
     data.append('file', image);
 
-    instance.get('/test').then((res) => console.log(res.data));
-
-    instance.post('/test/upload', data)
+    instance.post('/classify', data)
     .then((res) => {
-      setImage(`${baseURL}/${res.data.filename}`);
+      setPrediction(res.data.message);
+      setIsLoading(false);
     });
   };
 
@@ -29,27 +34,17 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <input type="file" style={{ margin: 20, marginLeft: 100, marginBottom: 10 }} onChange={onImageChange} className="filetype" />
-        { image && <img alt="preview image" src={image} /> }
-        <a 
-          className="App-link"
+        <input type="file" accept='image/png, image/jpeg, image/jpg' style={{ margin: 20, marginLeft: 100, marginBottom: 10 }} onChange={onImageChange} className="filetype" disabled={isLoading} />
+        { imagePreview && <img alt="preview image" src={imagePreview} /> }
+        {prediction && <p style={{ padding: 20 }}>Prediction: {prediction}</p> }
+        <button 
           onClick={handleClick}
           target="_blank"
           rel="noopener noreferrer"
+          disabled={isLoading}
         >
           Submit
-        </a>
+        </button>
       </header>
     </div>
   );

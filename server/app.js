@@ -3,6 +3,11 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const logger = require("morgan");
+const axios = require("axios");
+const FormData = require("form-data");
+const fs = require('fs/promises');
+
+const { upload } = require('./config');
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
@@ -10,9 +15,23 @@ app.use(express.json());
 app.use(logger("dev"));
 app.use(cors());
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 app.get("/api/test", (req, res) => res.send("Working fine!"));
+
+app.post("/api/classify", upload.single('file'), async (req, res, next) => {
+  const formData = new FormData();
+  const fileName = req.file.filename;
+
+  const file = await fs.readFile(req.file.path);
+
+  formData.append('image', file, `${fileName}`);
+
+  const ML_SERVER_BASE_URL = 'http://localhost:5000';
+  const response = await axios.post(`${ML_SERVER_BASE_URL}/api/classify`, formData);
+
+  return res.status(200).json({ message: response.data.prediction });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);
