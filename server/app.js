@@ -30,7 +30,10 @@ app.post("/api/classify", upload.single('file'), async (req, res, next) => {
   const ML_SERVER_BASE_URL = 'http://localhost:5000';
   const response = await axios.post(`${ML_SERVER_BASE_URL}/api/classify`, formData);
 
-  return res.status(200).json({ message: response.data.prediction });
+  const predictionValue = response.data.prediction;
+  const predictionMessage = predictionValue === 0 ? 'Image is not tampered' : 'Image is tampered';
+
+  return res.status(200).json({ message: predictionMessage });
 });
 
 app.listen(PORT, () => {
