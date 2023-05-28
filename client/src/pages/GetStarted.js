@@ -25,21 +25,19 @@ function GetStarted() {
     if(image === undefined) return;
     
     setIsLoading(true);
-    // const data = new FormData();
-    // data.append('file', image);
+    const data = new FormData();
+    data.append('file', image);
 
-    // instance.post('/classify', data)
-    // .then((res) => {
-    //   setPrediction(res.data.message);
-    //   setIsLoading(false);
-    // });
+    instance.post('/classify', data)
+    .then((res) => {
+      setPrediction(res.data.message);
+      setIsLoading(false);
+    });
     setTimeout(() => {
         setIsLoading(false);
         navigate('/result', { state: { prediction: 0, imagePreview: URL.createObjectURL(image) } });
     }, 3000);
   };
-  
-  console.log(image);
 
   return (
     <>
