@@ -30,13 +30,12 @@ function GetStarted() {
 
     instance.post('/classify', data)
     .then((res) => {
-      setPrediction(res.data.message);
+      let prediction = 0;
+      if(res.data.message === "Image is tampered") prediction = 1;
+      else if(res.data.message === "Image is not tampered") prediction = 0;
       setIsLoading(false);
+      navigate('/result', { state: { prediction, imagePreview: URL.createObjectURL(image) } });
     });
-    setTimeout(() => {
-        setIsLoading(false);
-        navigate('/result', { state: { prediction: 0, imagePreview: URL.createObjectURL(image) } });
-    }, 3000);
   };
 
   return (
