@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(logger("dev"));
 app.use(cors());
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 
 app.get("/api/test", (req, res) => res.send("Working fine!"));
 
