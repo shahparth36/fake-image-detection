@@ -27,7 +27,7 @@ app.post("/api/classify", upload.single('file'), async (req, res, next) => {
 
   formData.append('image', file, `${fileName}`);
 
-  const ML_SERVER_BASE_URL = 'http://ec2-13-235-57-44.ap-south-1.compute.amazonaws.com/api';
+  const ML_SERVER_BASE_URL = 'http://ec2-3-110-205-37.ap-south-1.compute.amazonaws.com/api';
   const response = await axios.post(`${ML_SERVER_BASE_URL}/classify`, formData);
 
   const predictionValue = response.data.prediction;
