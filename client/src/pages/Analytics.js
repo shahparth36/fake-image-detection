@@ -22,7 +22,7 @@ function Analytics() {
         datasets: [
             {
             label: '# of Images',
-            data: [imageStats.authentic, imageStats.tampered],
+            data: [imageStats.tampered, imageStats.authentic],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.5)',
                 'rgba(54, 162, 235, 0.5)',
