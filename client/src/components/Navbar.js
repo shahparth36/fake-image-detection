@@ -34,6 +34,7 @@ function ResponsiveAppBar() {
   const handleNavigation = (page) => {
     if(page === "Home") navigate('/');
     else if (page === "get-started") navigate('/get-started');
+    else if (page === "Analytics") navigate('/analytics');
   };
 
   return (
@@ -118,7 +119,6 @@ function ResponsiveAppBar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                disabled={page === "Analytics"}
                 onClick={() => handleNavigation(page)}
                 sx={{ my: 2, color: '#212123', display: 'block', textTransform: 'none', fontFamily: 'Montserrat', fontSize: 16, mx: 1 }}
               >

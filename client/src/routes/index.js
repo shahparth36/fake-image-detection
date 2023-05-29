@@ -2,6 +2,7 @@ import { Navigate } from "react-router";
 import Home from "../pages/Home";
 import GetStarted from "../pages/GetStarted";
 import Result from "../pages/Result";
+import Analytics from "../pages/Analytics";
 
 const routes = [
   {
@@ -15,6 +16,10 @@ const routes = [
   {
     path: "/result",
     element: <Result />,
+  },
+  {
+    path: "/analytics",
+    element: <Analytics />,
   },
 ];
 

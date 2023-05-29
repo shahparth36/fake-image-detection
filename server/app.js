@@ -7,7 +7,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const fs = require('fs/promises');
 
-const { upload } = require('./config');
+const { upload, redisClient } = require('./config');
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
@@ -27,15 +27,43 @@ app.post("/api/classify", upload.single('file'), async (req, res, next) => {
 
   formData.append('image', file, `${fileName}`);
 
-  const ML_SERVER_BASE_URL = 'http://ec2-3-110-205-37.ap-south-1.compute.amazonaws.com/api';
+  const ML_SERVER_BASE_URL = 'http://localhost:8000/api';
   const response = await axios.post(`${ML_SERVER_BASE_URL}/classify`, formData);
 
   const predictionValue = response.data.prediction;
+
+  const imageStats = await redisClient.get("imageStats");
+  const formattedImageStats = JSON.parse(imageStats);
+  if (formattedImageStats === null) {
+    const obj = {
+      authentic: predictionValue === 0 ? 1 : 0,
+      tampered: predictionValue === 1 ? 1 : 0,
+    };
+    await redisClient.set("imageStats", JSON.stringify(obj));
+  }  
+  else {
+    const updatedImageStats = {
+      authentic: predictionValue === 0 ? formattedImageStats.authentic + 1 : formattedImageStats.authentic,
+      tampered: predictionValue === 1 ? formattedImageStats.tampered + 1 : formattedImageStats.tampered,
+    };
+    await redisClient.set("imageStats", JSON.stringify(updatedImageStats));
+  }
+
   const predictionMessage = predictionValue === 0 ? 'Image is not tampered' : 'Image is tampered';
 
   return res.status(200).json({ message: predictionMessage });
 });
 
+app.get('/api/image-stats', async (req, res, next) => {
+  const imageStats = await redisClient.get("imageStats");
+  const formattedImageStats = JSON.parse(imageStats);
+  return res.status(200).json({ message: formattedImageStats });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);
+  redisClient.connect().then(()=> {
+    console.log('redis is connected')
+  })
+
 });
