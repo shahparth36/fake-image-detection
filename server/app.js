@@ -5,9 +5,10 @@ const cors = require("cors");
 const logger = require("morgan");
 const axios = require("axios");
 const FormData = require("form-data");
-const fs = require('fs/promises');
+const fs = require("fs/promises");
 
 const { upload, redisClient } = require('./config');
+const { deleteUserFiles } = require("./utils");
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
@@ -57,8 +58,21 @@ app.post("/api/classify", upload.single('file'), async (req, res, next) => {
 app.get('/api/image-stats', async (req, res, next) => {
   const imageStats = await redisClient.get("imageStats");
   const formattedImageStats = JSON.parse(imageStats);
+  if (formattedImageStats === null) {
+    const obj = {
+      authentic: 0,
+      tampered: 0,
+    };
+    await redisClient.set("imageStats", JSON.stringify(obj));
+  }
   return res.status(200).json({ message: formattedImageStats });
 });
+
+
+// delete files after every hour
+setInterval(() => {
+  deleteUserFiles();
+}, 1 * 60 * 60 * 1000);
 
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);
