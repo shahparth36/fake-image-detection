@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(logger("dev"));
 app.use(cors());
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 app.get("/api/test", (req, res) => res.send("Working fine!"));
 
@@ -28,7 +28,7 @@ app.post("/api/classify", upload.single('file'), async (req, res, next) => {
 
   formData.append('image', file, `${fileName}`);
 
-  const ML_SERVER_BASE_URL = 'http://localhost:8000/api';
+  const ML_SERVER_BASE_URL = process.env.ML_SERVER_BASE_URL;
   const response = await axios.post(`${ML_SERVER_BASE_URL}/classify`, formData);
 
   const predictionValue = response.data.prediction;
